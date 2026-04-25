@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài Nhóm 5 - API Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: #e0e0e0;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    header h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #a78bfa, #60a5fa, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      font-size: 1rem;
+      color: #94a3b8;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 30px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .badge-get {
+      background: rgba(52, 211, 153, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+
+    .badge-post {
+      background: rgba(96, 165, 250, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(96, 165, 250, 0.3);
+    }
+
+    .card p.desc {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #a78bfa;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #f1f5f9;
+      font-size: 0.95rem;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      outline: none;
+    }
+
+    .form-group input:focus {
+      border-color: #a78bfa;
+      box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15);
+    }
+
+    .form-group input::placeholder {
+      color: #64748b;
+    }
+
+    .btn {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-get {
+      background: linear-gradient(135deg, #34d399, #059669);
+      color: #fff;
+    }
+
+    .btn-get:hover {
+      box-shadow: 0 8px 24px rgba(52, 211, 153, 0.3);
+    }
+
+    .btn-post {
+      background: linear-gradient(135deg, #60a5fa, #3b82f6);
+      color: #fff;
+    }
+
+    .btn-post:hover {
+      box-shadow: 0 8px 24px rgba(96, 165, 250, 0.3);
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 16px 20px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-all;
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .result.show {
+      display: block;
+    }
+
+    .result.success {
+      border-left: 3px solid #34d399;
+    }
+
+    .result.error {
+      border-left: 3px solid #f87171;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .endpoint-path {
+      font-family: 'Courier New', monospace;
+      color: #e2e8f0;
+      font-size: 0.95rem;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.2), transparent);
+      margin: 16px 0 24px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #64748b;
+      font-size: 0.85rem;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🚀 Bài Nhóm 5 — API Demo</h1>
+      <p>Node.js & Express · Middleware · Routing</p>
+    </header>
+
+    <!-- GET /api/info -->
+    <div class="card" id="card-info">
+      <h2>
+        <span class="badge badge-get">GET</span>
+        <span class="endpoint-path">/api/info</span>
+      </h2>
+      <p class="desc">Kiểm tra thông tin với middleware <strong>checkAge</strong> (yêu cầu age ≥ 18)</p>
+      <div class="divider"></div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="info-name" placeholder="Nhập tên..." value="Nguyễn Văn A">
+        </div>
+        <div class="form-group">
+          <label>Age</label>
+          <input type="number" id="info-age" placeholder="Nhập tuổi..." value="20">
+        </div>
+      </div>
+      <button class="btn btn-get" id="btn-info" onclick="fetchInfo()">
+        Gửi Request →
+      </button>
+      <div class="result" id="result-info"></div>
+    </div>
+
+    <!-- POST /api/register -->
+    <div class="card" id="card-register">
+      <h2>
+        <span class="badge badge-post">POST</span>
+        <span class="endpoint-path">/api/register</span>
+      </h2>
+      <p class="desc">Đăng ký tài khoản mới với <strong>name</strong>, <strong>age</strong>, <strong>email</strong></p>
+      <div class="divider"></div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="reg-name" placeholder="Nhập tên..." value="Trần Thị B">
+        </div>
+        <div class="form-group">
+          <label>Age</label>
+          <input type="number" id="reg-age" placeholder="Nhập tuổi..." value="22">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="reg-email" placeholder="Nhập email..." value="tran.b@email.com">
+        </div>
+      </div>
+      <button class="btn btn-post" id="btn-register" onclick="fetchRegister()">
+        Gửi Request →
+      </button>
+      <div class="result" id="result-register"></div>
+    </div>
+
+    <footer>
+      Nhóm 5 &mdash; Bài tập thực hành Node.js & Express
+    </footer>
+  </div>
+
+  <script>
+    // Hiển thị kết quả
+    const showResult = (elementId, data, isError = false) => {
+      const el = document.getElementById(elementId);
+      el.textContent = JSON.stringify(data, null, 2);
+      el.className = `result show ${isError ? 'error' : 'success'}`;
+    };
+
+    // GET /api/info
+    const fetchInfo = async () => {
+      const name = document.getElementById('info-name').value;
+      const age = document.getElementById('info-age').value;
+      const btn = document.getElementById('btn-info');
+
+      btn.innerHTML = '<span class="loading"></span> Đang gửi...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(`/api/info?name=${encodeURIComponent(name)}&age=${encodeURIComponent(age)}`);
+        const data = await res.json();
+        showResult('result-info', data, !res.ok);
+      } catch (err) {
+        showResult('result-info', { error: err.message }, true);
+      } finally {
+        btn.innerHTML = 'Gửi Request →';
+        btn.disabled = false;
+      }
+    };
+
+    // POST /api/register
+    const fetchRegister = async () => {
+      const name = document.getElementById('reg-name').value;
+      const age = document.getElementById('reg-age').value;
+      const email = document.getElementById('reg-email').value;
+      const btn = document.getElementById('btn-register');
+
+      btn.innerHTML = '<span class="loading"></span> Đang gửi...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, age: Number(age), email })
+        });
+        const data = await res.json();
+        showResult('result-register', data, !res.ok);
+      } catch (err) {
+        showResult('result-register', { error: err.message }, true);
+      } finally {
+        btn.innerHTML = 'Gửi Request →';
+        btn.disabled = false;
+      }
+    };
+  </script>
+</body>
+</html>
